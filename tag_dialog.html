@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tags hinzufügen</title>
+    <link rel="stylesheet" href="tag_dialog.css">
+</head>
+<body>
+    <div id="container">
+        <strong>Tags hinzufügen</strong>
+        <div class="chips-input-container">
+            <div id="chips"></div>
+            <input type="text" id="tagInput" list="tagSuggestions" placeholder="tag1, tag2, tag3">
+            <datalist id="tagSuggestions"></datalist>
+            <button id="saveButton">Speichern</button>
+        </div>        
+    </div>
+    <script src="tag_dialog.js"></script>
+</body>
+</html>

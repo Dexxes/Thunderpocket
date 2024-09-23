@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Thunderpocket",
+  "description": "Save links to Pocket from Thunderbird emails. Just right-click on a link, login and you're done.",
+  "author": "Julian von Bülow",  
+  "version": "1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "thunderpocket@lol.de",
+      "strict_min_version": "78.0"
+    }
+  },
+  "icons": {
+    "64": "icon.ico",
+    "256": "icon.ico"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_ui": {
+    "page": "options.html"
+  },  
+  "permissions": [
+    "menus",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://getpocket.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["tag_dialog.html", "tag_dialog.js"],
+      "extension_ids": ["*"]
+    }
+  ],
+  "developer": {
+    "name": "Julian von Bülow",
+    "url": "mailto:mail@dexxes.de"
+  }
+}
