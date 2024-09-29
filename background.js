@@ -7,7 +7,7 @@ var PocketSaverPlugin =
 {
   CONSUMER_KEY: '112093-c1a2ce6cc369a10aa6625f1', // Replace with your Pocket API consumer key
   REDIRECT_URI: 'https://getpocket.com/de/home', // This should match your registered redirect URI
-  accessToken: null,
+  accessToken: null,  
 
   init: function () {
     browser.menus.create({
@@ -22,11 +22,21 @@ var PocketSaverPlugin =
       contexts: ["link"]
     });
 
-    browser.menus.onClicked.addListener((info, tab) => {
-      if (info.menuItemId === "save-to-pocket")
-        this.saveToPocket(info.linkUrl);
-      else if (info.menuItemId === "save-to-pocket-with-tags")
-        this.saveToPocketWithTags(info.linkUrl);
+    browser.menus.onClicked.addListener(async(info, tab) => {
+      const permissionsToRequest = { permissions: ["webRequest"], origins: ["https://getpocket.com/*"] };
+        await browser.permissions.request(permissionsToRequest).then( async(result) => 
+        {
+          if(result)
+          {
+            if (info.menuItemId === "save-to-pocket")
+              this.saveToPocket(info.linkUrl);              
+            else if (info.menuItemId === "save-to-pocket-with-tags")
+              this.saveToPocketWithTags(info.linkUrl);            
+          }
+          else
+            this.showNotification("Fehler", "Ohne die Berechtigung funktioniert das Add-On leider nicht");
+        });
+      
     });
 
     browser.runtime.onMessage.addListener(this.handleMessage.bind(this));
@@ -45,12 +55,15 @@ var PocketSaverPlugin =
   },
 
   saveToPocket: async function (link) {
+    await this.loadAccessToken();
+
     if (!link) {
       this.showNotification("Fehler", "Kein Link ausgewählt");
       return;
     }
-
-    if (!this.accessToken) {
+    
+    if (typeof this.accessToken === 'undefined')
+    {
       await this.authenticate(link);
     }
     else {
@@ -65,15 +78,19 @@ var PocketSaverPlugin =
     }
   },
 
-  saveToPocketWithTags: async function (link) {
-    if (!link) {
+  saveToPocketWithTags: async function (link) 
+  {
+    await this.loadAccessToken();
+    if (!link) 
+    {
       this.showNotification("Fehler", "Kein Link ausgewählt");
       return;
     }
 
-    if (!this.accessToken)
+    if (typeof this.accessToken === 'undefined')
       this.authenticate(link, true);
-    else {
+    else 
+    {
       // Fetch user's tags before opening the dialog
       const tags = await this.getUserTags();
 
@@ -181,7 +198,8 @@ var PocketSaverPlugin =
   },
 
   authenticate: async function (link = null, withTags = false) {
-    try {
+    try 
+    {
       // Step 1: Obtain a request token
       let response = await fetch('https://getpocket.com/v3/oauth/request', {
         method: 'POST',
@@ -264,12 +282,13 @@ var PocketSaverPlugin =
     return { cancel: true };
   },
 
-  addToPocket: async function (url) {
+  addToPocket: async function (url) 
+  {
     let response = await fetch('https://getpocket.com/v3/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
-        'X-Accept': 'application/json'
+        'X-Accept': 'application/json'        
       },
       body: JSON.stringify({
         url: url,
@@ -277,6 +296,7 @@ var PocketSaverPlugin =
         access_token: this.accessToken
       })
     });
+
 
     if (!response.ok) {
       throw new Error('Fehler beim Speichern in Pocket!');

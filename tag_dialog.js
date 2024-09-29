@@ -17,11 +17,17 @@ tagInput.addEventListener('keypress', function (e)
     }
 });
 
+function sanitizeHTML(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+}
+
 function addChip(tag) 
 {
     const chip = document.createElement('div');
     chip.className = 'chip';
-    chip.innerHTML = tag + ' <span class="close-btn">&times;</span>';
+    chip.innerHTML = sanitizeHTML(tag) + ' <span class="close-btn">&times;</span>';
     chip.querySelector('.close-btn').addEventListener('click', function () { chipsContainer.removeChild(chip); });
     chipsContainer.appendChild(chip);
 }
@@ -43,7 +49,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.getElementById('saveButton').addEventListener('click', function() 
     {
-        var tags = tagInput.value;
+        var chips = document.getElementById("chips").children;
+
+        var tags = [];
+        Array.from(chips).forEach( (elem) => 
+        {
+            tags.push(elem.childNodes[0].nodeValue);
+        });
         browser.runtime.sendMessage({ action: "saveToPocketWithTags", tags: tags });
         window.close();
     });

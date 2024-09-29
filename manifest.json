@@ -3,11 +3,11 @@
   "name": "Thunderpocket",
   "description": "Save links to Pocket from Thunderbird emails. Just right-click on a link, login and you're done.",
   "author": "Julian von Bülow",  
-  "version": "1.0",
+  "version": "1.0.1",
   "browser_specific_settings": {
     "gecko": {
       "id": "thunderpocket@lol.de",
-      "strict_min_version": "78.0"
+      "strict_min_version": "128.0"
     }
   },
   "icons": {
@@ -23,13 +23,13 @@
   "permissions": [
     "menus",
     "storage",
-    "webRequest",
     "webRequestBlocking",
     "notifications"
   ],
   "host_permissions": [
     "https://getpocket.com/*"
   ],
+  "optional_permissions":["webRequest"],
   "web_accessible_resources": [
     {
       "resources": ["tag_dialog.html", "tag_dialog.js"],
